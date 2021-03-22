@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'androidx.navigation.safeargs'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.arindom.cashrecipt"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        dataBinding true
+    }
+}
+
+dependencies {
+
+    implementation deps.kotlinStdlib
+    implementation deps.kotlinCore
+    implementation deps.androidAppCompat
+    implementation deps.androidMaterialDesign
+    implementation deps.androidConstraintLayout
+    implementation deps.coroutines
+    implementation deps.activityExtentions
+    implementation deps.lifecycleLiveData
+    implementation deps.navigationFragment
+    implementation deps.navigationUi
+    implementation deps.gson
+    implementation deps.hilt
+
+    kapt deps.kapt
+    testImplementation deps.junit4
+    androidTestImplementation deps.androidTestImplementation
+    androidTestImplementation deps.androidTestImplementation
+}

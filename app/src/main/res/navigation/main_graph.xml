@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/cashReceiptListScreen">
+
+    <fragment
+        android:id="@+id/cashReceiptListScreen"
+        android:name="com.arindom.cashrecipt.views.screens.main.CashReceiptListScreen"
+        android:label="CashReceiptListScreen"
+        tools:layout="@layout/fragment_cashreceipt_list">
+
+        <action
+            android:id="@+id/action_cashReceiptListScreen_to_receiptDetailsScreen"
+            app:destination="@id/receiptDetailsScreen" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/receiptDetailsScreen"
+        android:name="com.arindom.cashrecipt.views.screens.details.ReceiptDetailsScreen"
+        android:label="ReceiptDetailsScreen"
+        tools:layout="@layout/fragment_cashreceipt_details">
+        <argument
+            android:name="receipId"
+            app:argType="integer" />
+    </fragment>
+</navigation>

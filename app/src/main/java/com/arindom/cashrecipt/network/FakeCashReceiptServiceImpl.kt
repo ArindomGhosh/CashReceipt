@@ -7,6 +7,16 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import kotlin.random.Random
 
+/**
+ * Mock response to showcase the UI changes based on API calls
+ * This can further be explored for setting other params of UI as
+ * well.
+ *
+ * Change between receiptDetailsLayout and  receiptDetailsLayoutWithoutProductInfo
+ * to see the UI changes in app based on mock API response.
+ * You can also change the order of the UI displayed by changing the order of the
+ * screen in the response.
+ * */
 val receiptDetailsLayout = ReceiptDetailsLayout(
     page = "ReceiptDetailsScreen",
     rows = listOf("UserInfo", "ProductInfo", "ReceiptInfo")
@@ -219,7 +229,7 @@ class FakeCashReceiptServiceImpl @Inject constructor() : CashReceiptService {
     override fun getReceiptDetailsLayout(): Flow<ResultStates<out ReceiptDetailsLayout>> {
         return flow {
             kotlinx.coroutines.delay(1000)
-            emit(ResultStates.Success(receiptDetailsLayout))
+            emit(ResultStates.Success(receiptDetailsLayout))// replace with receiptDetailsLayoutWithoutProductInfo to change  Receipt Details UI
         }
     }
 }

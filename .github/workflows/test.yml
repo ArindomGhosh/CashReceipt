@@ -32,7 +32,12 @@ jobs:
       
       - name: Run Unit Test
         run: bash ./gradlew test
-      
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
             
       # Runs a single command using the runners shell
       - name: Run a one-line script
@@ -43,3 +48,5 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+
+

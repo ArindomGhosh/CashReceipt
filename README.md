@@ -3,7 +3,7 @@ In this I have tried to explore the conventional android APIs like:
 1) __ViewModel__
 2) __Livedata__
 3) __Coroutines__
-4) __Navigation Componen__
+4) __Navigation Component__
 5) __Hilt__
 
 To behave like a Stateful UI, where whenever there is change through an API call the affected UI graph is recreated.

@@ -18,7 +18,6 @@ class ReceiptDetailsScreenViewModel @Inject constructor(
     private val mCashReceiptService: CashReceiptService,
 ) : CashReceiptViewModel() {
     private val mCasReceiptUiState = MediatorLiveData<UIState<CashReceipt>>()
-    val receiptIdLiveDate = MutableLiveData(0)
     fun fetchReceiptDetails(receiptId: Int) {
         val resultUIState = mCashReceiptService
             .getCashReceiptDetails(receiptId)

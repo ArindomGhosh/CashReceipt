@@ -45,7 +45,8 @@ dependencies {
     implementation deps.androidAppCompat
     implementation deps.androidMaterialDesign
     implementation deps.androidConstraintLayout
-    implementation deps.coroutines
+    implementation deps.coroutinesCore
+    implementation deps.coroutinesAndroid
     implementation deps.activityExtentions
     implementation deps.lifecycleLiveData
     implementation deps.navigationFragment
@@ -54,7 +55,10 @@ dependencies {
     implementation deps.hilt
 
     kapt deps.kapt
-    testImplementation deps.junit4
-    androidTestImplementation deps.androidTestImplementation
-    androidTestImplementation deps.androidTestImplementation
+    testImplementation deps.junit4 //unitTest
+    testImplementation deps.mockkTest //unitTest
+    testImplementation deps.coreTesting
+    testImplementation deps.coroutineTestScheduler
+    androidTestImplementation deps.androidTestJunit //instrumentation
+    androidTestImplementation deps.androidTestMockk //instrumentation
 }

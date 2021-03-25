@@ -1,8 +1,10 @@
 package com.arindom.cashrecipt.network
 
+import com.arindom.cashrecipt.exception.UserNotFoundException
 import com.arindom.cashrecipt.network.responses.CashReceipt
 import com.arindom.cashrecipt.network.responses.ReceiptDetailsLayout
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import kotlin.random.Random
@@ -29,7 +31,7 @@ val receiptDetailsLayoutWithoutProductInfo = ReceiptDetailsLayout(
 
 val receiptList = listOf(
     CashReceipt(
-        receiptId = Random.nextInt(0, 100),
+        receiptId = 85,
         date = "2021:02:15",//yyyy:mm:dd
         category = "Grocery",
         customerName = "Arindom Ghosh",
@@ -222,7 +224,12 @@ class FakeCashReceiptServiceImpl @Inject constructor() : CashReceiptService {
     override fun getCashReceiptDetails(id: Int): Flow<ResultStates<out CashReceipt>> {
         return flow {
             kotlinx.coroutines.delay(1000)
-            emit(ResultStates.Success(receiptList.first { it.receiptId == id }))
+            try {
+                emit(ResultStates.Success(receiptList.first { it.receiptId == id }))
+            } catch (e: Exception) {
+                println("Exception")
+                emit(ResultStates.Failure(UserNotFoundException(id.toString())))
+            }
         }
     }
 

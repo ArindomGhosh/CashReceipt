@@ -8,9 +8,9 @@ data class ReceiptSummary(
     val category: String,
     val totalAmountWithTax: Double,
     val taxesInPercent: Double,
-    val discountInPercent: Double = 0.0
-){
-    constructor(cashReceipt: CashReceipt):this(
+    val discountInPercent: Double = 0.0,
+) {
+    constructor(cashReceipt: CashReceipt) : this(
         receiptId = cashReceipt.receiptId,
         date = cashReceipt.date,
         category = cashReceipt.category,

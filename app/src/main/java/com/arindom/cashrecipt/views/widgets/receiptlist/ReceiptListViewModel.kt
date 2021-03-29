@@ -14,13 +14,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
+sealed class ReceiptListEvent {
+    object FetchReceiptListEvent : ReceiptListEvent()
+}
+
 @HiltViewModel
 class ReceiptListViewModel @Inject constructor(
     private val mCashReceiptService: CashReceiptService,
 ) : CashReceiptViewModel() {
     var showCategory: Boolean = true
     private val cashReceiptLiveData = MediatorLiveData<UIState<List<CashReceipt>>>()
-    fun fetchReceiptList() {
+    private fun fetchReceiptList() {
         val resultStates = mCashReceiptService
             .getCashReceiptList()
             .map { result ->
@@ -49,5 +53,11 @@ class ReceiptListViewModel @Inject constructor(
     @Bindable
     fun isProgressbarVisible(): Boolean {
         return cashReceiptLiveData.value?.loading ?: true
+    }
+
+    fun onReceiptListEventTriggered(receiptListEvent: ReceiptListEvent) {
+        when (receiptListEvent) {
+            ReceiptListEvent.FetchReceiptListEvent -> fetchReceiptList()
+        }
     }
 }

@@ -59,7 +59,7 @@ class ReceiptListFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding.receiptListVM = mReceiptListViewModel
-        mReceiptListViewModel.fetchReceiptList()
+        mReceiptListViewModel.onReceiptListEventTriggered(ReceiptListEvent.FetchReceiptListEvent)
     }
 
     private fun updateUI(uiState: UIState<List<CashReceipt>>) {

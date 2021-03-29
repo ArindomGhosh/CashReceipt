@@ -13,12 +13,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
+sealed class ReceiptDetailsScreenEvent {
+    data class FetchNewReceiptForReceiptIdScreen(val receiptId: Int) : ReceiptDetailsScreenEvent()
+}
+
 @HiltViewModel
 class ReceiptDetailsScreenViewModel @Inject constructor(
     private val mCashReceiptService: CashReceiptService,
 ) : CashReceiptViewModel() {
     private val mCasReceiptUiState = MediatorLiveData<UIState<CashReceipt>>()
-    fun fetchReceiptDetails(receiptId: Int) {
+    private fun fetchReceiptDetails(receiptId: Int) {
         val resultUIState = mCashReceiptService
             .getCashReceiptDetails(receiptId)
             .map { result ->
@@ -39,6 +43,13 @@ class ReceiptDetailsScreenViewModel @Inject constructor(
 
     fun getCashReceiptLiveDate(): LiveData<UIState<CashReceipt>> {
         return mCasReceiptUiState
+    }
+
+    fun onReceiptDetailsEventTrigger(receiptDetailsScreenEvent: ReceiptDetailsScreenEvent) {
+        when (receiptDetailsScreenEvent) {
+            is ReceiptDetailsScreenEvent.FetchNewReceiptForReceiptIdScreen -> fetchReceiptDetails(
+                receiptId = receiptDetailsScreenEvent.receiptId)
+        }
     }
 
     @Bindable

@@ -6,6 +6,7 @@ import com.arindom.cashrecipt.network.CashReceiptService
 import com.arindom.cashrecipt.network.ResultStates
 import com.arindom.cashrecipt.network.responses.CashReceipt
 import com.arindom.cashrecipt.views.UIState
+import com.arindom.cashrecipt.views.widgets.receiptlist.ReceiptListEvent
 import com.arindom.cashrecipt.views.widgets.receiptlist.ReceiptListViewModel
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -23,41 +24,36 @@ class ReceiptListViewModelTesting : CashReceiptTestSetup() {
     private lateinit var mockCashReceiptService: CashReceiptService
 
     @Test
-    fun `should return receipt list on success`() {
-        val mockCashReceiptObserver = mockk<Observer<UIState<List<CashReceipt>>>>(relaxed = true)
+    fun `should return receipt list on success of FetchReceiptListEvent`() {
         val receiptListViewModel = ReceiptListViewModel(mockCashReceiptService)
+        val mockCashReceiptObserver = mockk<Observer<UIState<List<CashReceipt>>>>(relaxed = true)
         val cashReceiptCaptor = mutableListOf<UIState<List<CashReceipt>>>()
         receiptListViewModel.getCashReceiptLiveDate().observeForever(mockCashReceiptObserver)
         every { mockCashReceiptService.getCashReceiptList() } returns flow {
             emit(getReceiptListSuccessResponse())
         }
-        receiptListViewModel.fetchReceiptList()
-        verify(exactly = 2) {
-            mockCashReceiptObserver.onChanged(capture(cashReceiptCaptor))
-        }
+        receiptListViewModel.onReceiptListEventTriggered(ReceiptListEvent.FetchReceiptListEvent)
+        verify(exactly = 2) { mockCashReceiptObserver.onChanged(capture(cashReceiptCaptor)) }
         assertTrue(cashReceiptCaptor[0].loading)
         assertNotNull(cashReceiptCaptor[1].data)
-        assertEquals("Arindom Ghosh",cashReceiptCaptor[1].data!![0].customerName)
+        assertEquals("Arindom Ghosh", cashReceiptCaptor[1].data!![0].customerName)
     }
 
     @Test
-    fun `should return failure on Exception`(){
-        val mockCashReceiptObserver = mockk<Observer<UIState<List<CashReceipt>>>>(relaxed = true)
+    fun `should return Failure on exception of FetchReceiptListEvent`() {
         val receiptListViewModel = ReceiptListViewModel(mockCashReceiptService)
+        val mockCashReceiptObserver = mockk<Observer<UIState<List<CashReceipt>>>>(relaxed = true)
         val cashReceiptCaptor = mutableListOf<UIState<List<CashReceipt>>>()
         receiptListViewModel.getCashReceiptLiveDate().observeForever(mockCashReceiptObserver)
         every { mockCashReceiptService.getCashReceiptList() } returns flow {
             emit(getReceiptListFailedResponse())
         }
-        receiptListViewModel.fetchReceiptList()
-        verify(exactly = 2) {
-            mockCashReceiptObserver.onChanged(capture(cashReceiptCaptor))
-        }
+        receiptListViewModel.onReceiptListEventTriggered(ReceiptListEvent.FetchReceiptListEvent)
+        verify(exactly = 2) { mockCashReceiptObserver.onChanged(capture(cashReceiptCaptor)) }
         assertTrue(cashReceiptCaptor[0].loading)
         assertNotNull(cashReceiptCaptor[1].error)
-        assertEquals("No List found!!",cashReceiptCaptor[1].error!!.message)
+        assertEquals("No List found!!", cashReceiptCaptor[1].error!!.message)
     }
-
 
     private fun getReceiptListSuccessResponse(): ResultStates.Success<List<CashReceipt>> {
         return ResultStates.Success(listOf(CashReceipt(
@@ -76,6 +72,7 @@ class ReceiptListViewModelTesting : CashReceiptTestSetup() {
             taxesInPercent = 18.00
         )))
     }
+
     private fun getReceiptListFailedResponse(): ResultStates.Failure {
         return ResultStates.Failure(Exception("No List found!!"))
     }

@@ -35,13 +35,13 @@ class ReceiptSummaryFragment(private val receiptModel: ReceiptSummary) :
         mBinding =
             DataBindingUtil.inflate(inflater, R.layout.widget_receipt_summary, container, false)
         mBinding.receiptSummaryVM = mReceiptSummaryViewModel
-        mReceiptSummaryViewModel.setReceiptSummary(receiptModel)
+        mReceiptSummaryViewModel.onReceiptSummaryEventTrigger(ReceiptSummaryWidgetEvent.FetchReceiptSummaryEvent(receiptModel))
         return mBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mReceiptSummaryViewModel.receiptSummaryLiveData.observe(
+        mReceiptSummaryViewModel.getReceiptSummaryLiveData().observe(
             viewLifecycleOwner,
             receiptSummaryObserver
         )

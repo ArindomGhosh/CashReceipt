@@ -34,12 +34,12 @@ class UserDetailsFragment(private val userDetails: UserDetails) : Fragment() {
         mBinding =
             DataBindingUtil.inflate(inflater, R.layout.widget_user_details, container, false)
         mBinding.userDetailVM = mUserDetailsViewModel
-        mUserDetailsViewModel.setUserDetails(userDetails)
+        mUserDetailsViewModel.onUserDetailsEventTrigger(UserDetailsWidgetEvent.FetchUserDetailsEvent(userDetails))
         return mBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mUserDetailsViewModel.userDetailsLiveDate.observe(viewLifecycleOwner, userDetailsObserver)
+        mUserDetailsViewModel.getUserDetailsLiveData().observe(viewLifecycleOwner, userDetailsObserver)
     }
 }

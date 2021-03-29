@@ -12,8 +12,23 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
+sealed class CashReceiptTabletEvent {
+    data class ShowCashReceiptDetailsEvents(val cashReceipt: CashReceipt) : CashReceiptTabletEvent()
+}
+
 @HiltViewModel
 class CashReceiptTabletViewModel @Inject constructor(
 ) : ViewModel() {
-    val cashReceiptLiveData = MutableLiveData<CashReceipt>()
+    private val cashReceiptLiveData = MutableLiveData<CashReceipt>()
+
+    fun getCashReceiptLiveData(): LiveData<CashReceipt> {
+        return cashReceiptLiveData
+    }
+
+    fun onCashReceiptEventTrigger(cashReceiptDetailsEvents: CashReceiptTabletEvent) {
+        when(cashReceiptDetailsEvents){
+            is CashReceiptTabletEvent.ShowCashReceiptDetailsEvents -> cashReceiptLiveData.postValue(cashReceiptDetailsEvents.cashReceipt)
+        }
+    }
+
 }

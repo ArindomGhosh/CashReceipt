@@ -7,34 +7,36 @@ import com.arindom.cashrecipt.network.CashReceiptService
 import com.arindom.cashrecipt.network.ResultStates
 import com.arindom.cashrecipt.network.responses.ReceiptDetailsLayout
 import com.arindom.cashrecipt.views.UIState
-import com.arindom.cashrecipt.views.widgets.receiptdetails.ReceiptDetailsViewModel
-import io.mockk.CaptureMatcher
+import com.arindom.cashrecipt.views.widgets.receiptdetails.ReceiptDetailsWidgetEvent
+import com.arindom.cashrecipt.views.widgets.receiptdetails.ReceiptDetailsWidgetViewModel
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.flow
 import org.hamcrest.CoreMatchers
-import org.junit.Assert.assertThat
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class ReceiptDetailsViewModelTest : CashReceiptTestSetup() {
+class ReceiptDetailsWidgetViewModelTest : CashReceiptTestSetup() {
 
     @MockK
     private lateinit var mockCashReceiptService: CashReceiptService
 
     @Test
-    fun `should return layout on success`() {
-        val receiptDetailsViewModel = ReceiptDetailsViewModel(mockCashReceiptService)
+    fun `should return layout on success of FetchLayoutDetailsEvent`() {
+        val receiptDetailsWidgetViewModel = ReceiptDetailsWidgetViewModel(mockCashReceiptService)
         val mockReceiptDetailsLayoutObserver =
             mockk<Observer<UIState<ReceiptDetailsLayout>>>(relaxed = true)
-        receiptDetailsViewModel.getLayoutLiveDate().observeForever(mockReceiptDetailsLayoutObserver)
+        receiptDetailsWidgetViewModel.getLayoutLiveDate().observeForever(mockReceiptDetailsLayoutObserver)
         val receiptDetailsLayoutCaptor = mutableListOf<UIState<ReceiptDetailsLayout>>()
         every { mockCashReceiptService.getReceiptDetailsLayout() } returns flow {
             emit(getReceiptLayoutResponseOnSuccess())
         }
-        receiptDetailsViewModel.fetchReceiptListLayout()
+        receiptDetailsWidgetViewModel.onReceiptEventTrigger(
+            ReceiptDetailsWidgetEvent.FetchLayoutDetailsEvent
+        )
         verify(exactly = 2) {
             mockReceiptDetailsLayoutObserver.onChanged(capture(receiptDetailsLayoutCaptor))
         }
@@ -43,18 +45,19 @@ class ReceiptDetailsViewModelTest : CashReceiptTestSetup() {
             CoreMatchers.instanceOf(ReceiptDetailsLayout::class.java))
     }
 
-
     @Test
-    fun `should return failure on exception`() {
-        val receiptDetailsViewModel = ReceiptDetailsViewModel(mockCashReceiptService)
+    fun `should return failure on exception in FetchLayoutDetailsEvent`() {
+        val receiptDetailsWidgetViewModel = ReceiptDetailsWidgetViewModel(mockCashReceiptService)
         val mockReceiptDetailsLayoutObserver =
             mockk<Observer<UIState<ReceiptDetailsLayout>>>(relaxed = true)
-        receiptDetailsViewModel.getLayoutLiveDate().observeForever(mockReceiptDetailsLayoutObserver)
+        receiptDetailsWidgetViewModel.getLayoutLiveDate().observeForever(mockReceiptDetailsLayoutObserver)
         val receiptDetailsLayoutCaptor = mutableListOf<UIState<ReceiptDetailsLayout>>()
         every { mockCashReceiptService.getReceiptDetailsLayout() } returns flow {
             emit(ResultStates.Failure(LayoutNotReceivedException()))
         }
-        receiptDetailsViewModel.fetchReceiptListLayout()
+        receiptDetailsWidgetViewModel.onReceiptEventTrigger(
+            ReceiptDetailsWidgetEvent.FetchLayoutDetailsEvent
+        )
         verify(exactly = 2) {
             mockReceiptDetailsLayoutObserver.onChanged(capture(receiptDetailsLayoutCaptor))
         }
@@ -62,6 +65,8 @@ class ReceiptDetailsViewModelTest : CashReceiptTestSetup() {
         assertThat(receiptDetailsLayoutCaptor[1].error,
             CoreMatchers.instanceOf(LayoutNotReceivedException::class.java))
     }
+
+
 
     private fun getReceiptLayoutResponseOnSuccess(): ResultStates.Success<ReceiptDetailsLayout> {
         return ResultStates.Success<ReceiptDetailsLayout>(ReceiptDetailsLayout(

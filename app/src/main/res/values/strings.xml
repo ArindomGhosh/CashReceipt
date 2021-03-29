@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CashRecipt</string>
+    <string name="small_main_activity_container_description">containerForPhone</string>
+    <string name="large_main_activity_container_description">containerForTablet</string>
 </resources>

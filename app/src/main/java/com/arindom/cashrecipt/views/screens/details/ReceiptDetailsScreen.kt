@@ -54,10 +54,12 @@ class ReceiptDetailsScreen :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let { bundle ->
-            mReceiptDetailsScreenViewModel.fetchReceiptDetails(
-                ReceiptDetailsScreenArgs.fromBundle(
-                    bundle
-                ).receipId
+            mReceiptDetailsScreenViewModel.onReceiptDetailsEventTrigger(
+                ReceiptDetailsScreenEvent.FetchNewReceiptForReceiptIdScreen(
+                    ReceiptDetailsScreenArgs.fromBundle(
+                        bundle
+                    ).receipId
+                )
             )
         }
     }

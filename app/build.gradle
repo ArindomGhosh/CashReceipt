@@ -54,11 +54,15 @@ dependencies {
     implementation deps.gson
     implementation deps.hilt
 
-    kapt deps.kapt
     testImplementation deps.junit4 //unitTest
     testImplementation deps.mockkTest //unitTest
     testImplementation deps.coreTesting
     testImplementation deps.coroutineTestScheduler
     androidTestImplementation deps.androidTestJunit //instrumentation
     androidTestImplementation deps.androidTestMockk //instrumentation
+    androidTestImplementation deps.androidTestEspresso
+    androidTestImplementation deps.hiltAndroidTestImpl
+    kaptAndroidTest deps.kaptHiltAndroidText
+    debugImplementation(deps.fragmentDebugImpl)
+    kapt deps.kaptHiltTest
 }

@@ -39,13 +39,13 @@ class ProductInfoFragment(
     ): View {
         mBinding =
             DataBindingUtil.inflate(inflater, R.layout.widget_product_info, container, false)
-        mProductInfoViewModel.setItemPriceList(mItemWithPriceList)
+        mProductInfoViewModel.onProductInfoEventTrigger(ProductInfoWidgetEvent.FetchProductListEvent(mItemWithPriceList))
         return mBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mProductInfoViewModel.productDetailListLiveData.observe(viewLifecycleOwner) {
+        mProductInfoViewModel.getProductDetailsLiveData().observe(viewLifecycleOwner) {
             updateUI(it)
         }
     }

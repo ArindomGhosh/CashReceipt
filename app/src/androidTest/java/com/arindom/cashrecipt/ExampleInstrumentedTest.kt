@@ -2,6 +2,8 @@ package com.arindom.cashrecipt
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
+import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,7 +15,9 @@ import org.junit.Assert.*
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-@RunWith(AndroidJUnit4::class)
+
+@RunWith(AndroidJUnit4ClassRunner::class)
+@LargeTest
 class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {

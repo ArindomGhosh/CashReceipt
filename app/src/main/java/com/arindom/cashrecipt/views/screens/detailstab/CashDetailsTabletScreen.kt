@@ -37,7 +37,7 @@ class CashDetailsTabletScreen : Fragment() {
     }
 
     private fun addSubscription() {
-        mCashReceiptTabletViewModel.cashReceiptLiveData.observe(viewLifecycleOwner) {
+        mCashReceiptTabletViewModel.getCashReceiptLiveData().observe(viewLifecycleOwner) {
             inflateCashReceiptDetailsWidget(it)
         }
     }
@@ -62,7 +62,7 @@ class CashDetailsTabletScreen : Fragment() {
                 mBinding.frContainerList.id,
                 ReceiptListWidget(
                     action = { cashReceipt ->
-                        mCashReceiptTabletViewModel.cashReceiptLiveData.postValue(cashReceipt)
+                        mCashReceiptTabletViewModel.onCashReceiptEventTrigger(CashReceiptTabletEvent.ShowCashReceiptDetailsEvents(cashReceipt))
                     },
                     showCategory = true // default true
                 )

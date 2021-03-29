@@ -4,6 +4,7 @@ import androidx.lifecycle.Observer
 import com.arindom.cashrecipt.CashReceiptTestSetup
 import com.arindom.cashrecipt.network.responses.CashReceipt
 import com.arindom.cashrecipt.views.widgets.productinfo.ProductInfoViewModel
+import com.arindom.cashrecipt.views.widgets.productinfo.ProductInfoWidgetEvent
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -13,13 +14,13 @@ import kotlin.random.Random
 
 class ProductInfoViewModelTest : CashReceiptTestSetup() {
     @Test
-    fun `should return list of product with price when live data value is set`() {
+    fun `should return list of product with price for FetchProductListEvent`() {
         val productViewModel = ProductInfoViewModel()
         val mockProductListObserver =
             mockk<Observer<List<CashReceipt.ItemWithPrice>>>(relaxed = true)
         val productListCaptor = slot<List<CashReceipt.ItemWithPrice>>()
-        productViewModel.productDetailListLiveData.observeForever(mockProductListObserver)
-        productViewModel.setItemPriceList(getProductPriceList())
+        productViewModel.getProductDetailsLiveData().observeForever(mockProductListObserver)
+        productViewModel.onProductInfoEventTrigger(ProductInfoWidgetEvent.FetchProductListEvent(getProductPriceList()))
         verify { mockProductListObserver.onChanged(capture(productListCaptor)) }
         assertEquals(2, productListCaptor.captured.size)
     }

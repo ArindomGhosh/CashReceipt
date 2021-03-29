@@ -7,13 +7,17 @@ import com.arindom.cashrecipt.network.CashReceiptService
 import com.arindom.cashrecipt.network.ResultStates
 import com.arindom.cashrecipt.network.responses.CashReceipt
 import com.arindom.cashrecipt.views.UIState
+import com.arindom.cashrecipt.views.screens.details.ReceiptDetailsScreenEvent
 import com.arindom.cashrecipt.views.screens.details.ReceiptDetailsScreenViewModel
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import org.hamcrest.CoreMatchers
-import org.junit.Assert.*
+import org.hamcrest.MatcherAssert.assertThat
+
 import org.junit.Test
 import kotlin.random.Random
 
@@ -23,9 +27,8 @@ class ReceiptDetailsScreenViewModelTest:CashReceiptTestSetup() {
     @MockK
     private lateinit var mCashReceiptService: CashReceiptService
 
-
     @Test
-    fun `should return receipt for id on success`() {
+    fun `onEventTriggered should fetch receipt details on success of FetchNewReceiptForReceiptId Event`(){
         val receiptDetailsScreenViewModel = ReceiptDetailsScreenViewModel(mCashReceiptService)
         val cashReceiptCaptor = mutableListOf<UIState<CashReceipt>>()
         val mockCashReceiptObserver: Observer<UIState<CashReceipt>> = mockk(relaxed = true)
@@ -47,16 +50,16 @@ class ReceiptDetailsScreenViewModelTest:CashReceiptTestSetup() {
                 taxesInPercent = 18.00
             ))))
         }
+        every { mCashReceiptService.getCashReceiptDetails(any()) } returns mockResponseFlow
+        receiptDetailsScreenViewModel.onReceiptDetailsEventTrigger(ReceiptDetailsScreenEvent.FetchNewReceiptForReceiptIdScreen(45))
 
-        every { mCashReceiptService.getCashReceiptDetails(any()) } answers { mockResponseFlow }
-        receiptDetailsScreenViewModel.fetchReceiptDetails(85)
-        verify(exactly = 2) { mockCashReceiptObserver.onChanged(capture(cashReceiptCaptor)) }
+        verify(exactly = 2) { mockCashReceiptObserver.onChanged(capture(cashReceiptCaptor))  }
         assertTrue(cashReceiptCaptor[0].loading)
         assertNotNull(cashReceiptCaptor[1].data)
     }
 
     @Test
-    fun `should return failure for given receipt id`() {
+    fun `onEventTriggered should return failure on error of FetchNewReceiptForReceiptId Event`(){
         val receiptDetailsScreenViewModel = ReceiptDetailsScreenViewModel(mCashReceiptService)
         val cashReceiptCaptor = mutableListOf<UIState<CashReceipt>>()
         val mockCashReceiptObserver: Observer<UIState<CashReceipt>> = mockk(relaxed = true)
@@ -64,9 +67,10 @@ class ReceiptDetailsScreenViewModelTest:CashReceiptTestSetup() {
         val mockResponseFlow = flow {
             emit(ResultStates.Failure(UserNotFoundException("45")))
         }
-        every { mCashReceiptService.getCashReceiptDetails(any()) } answers { mockResponseFlow }
-        receiptDetailsScreenViewModel.fetchReceiptDetails(45)
-        verify(exactly = 2) { mockCashReceiptObserver.onChanged(capture(cashReceiptCaptor)) }
+        every { mCashReceiptService.getCashReceiptDetails(any()) } returns mockResponseFlow
+        receiptDetailsScreenViewModel.onReceiptDetailsEventTrigger(ReceiptDetailsScreenEvent.FetchNewReceiptForReceiptIdScreen(45))
+
+        verify(exactly = 2) { mockCashReceiptObserver.onChanged(capture(cashReceiptCaptor))  }
         assertTrue(cashReceiptCaptor[0].loading)
         assertThat(cashReceiptCaptor[1].error, CoreMatchers.instanceOf(UserNotFoundException::class.java))
     }

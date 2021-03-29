@@ -48,7 +48,7 @@ class ReceiptDetailsFragment(
     private lateinit var mBinding: WidgetReceiptDetailsBinding
     private val children = mutableListOf<ReceiptDetailsChildren>()
     private val mFragmentList = mutableListOf<Fragment>()
-    private val mReceiptDetailsViewModel: ReceiptDetailsViewModel by viewModels()
+    private val mReceiptDetailsWidgetViewModel: ReceiptDetailsWidgetViewModel by viewModels()
     private val layoutLiveDataObserver: Observer<UIState<ReceiptDetailsLayout>> =
         Observer { receiptDetailsLayout ->
             receiptDetailsLayout.data
@@ -59,7 +59,7 @@ class ReceiptDetailsFragment(
                         }
                     updateUI(cashReceipt = cashReceipt)
                 }
-            mReceiptDetailsViewModel.notifyChange()
+            mReceiptDetailsWidgetViewModel.notifyChange()
         }
 
     override fun onCreateView(
@@ -75,12 +75,12 @@ class ReceiptDetailsFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mBinding.receiptDetailsVM = mReceiptDetailsViewModel
-        mReceiptDetailsViewModel.fetchReceiptListLayout()
+        mBinding.receiptDetailsVM = mReceiptDetailsWidgetViewModel
+        mReceiptDetailsWidgetViewModel.onReceiptEventTrigger(ReceiptDetailsWidgetEvent.FetchLayoutDetailsEvent)
     }
 
     private fun addSubscriptions() {
-        mReceiptDetailsViewModel.getLayoutLiveDate()
+        mReceiptDetailsWidgetViewModel.getLayoutLiveDate()
             .observe(viewLifecycleOwner, layoutLiveDataObserver)
     }
 

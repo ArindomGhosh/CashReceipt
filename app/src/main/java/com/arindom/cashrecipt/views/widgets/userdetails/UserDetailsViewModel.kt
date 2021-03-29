@@ -1,24 +1,32 @@
 package com.arindom.cashrecipt.views.widgets.userdetails
 
 import androidx.databinding.Bindable
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
-import com.arindom.cashrecipt.exception.NoViewModelFoundException
+import androidx.lifecycle.*
 import com.arindom.cashrecipt.views.CashReceiptViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+sealed class UserDetailsWidgetEvent {
+    data class FetchUserDetailsEvent(val userDetails: UserDetails) : UserDetailsWidgetEvent()
+}
+
 @HiltViewModel
-class UserDetailsViewModel @Inject constructor():CashReceiptViewModel() {
-    val userDetailsLiveDate = MutableLiveData<UserDetails>()
-    fun setUserDetails(userDetails: UserDetails){
-        userDetailsLiveDate.postValue(userDetails)
+class UserDetailsViewModel @Inject constructor() : CashReceiptViewModel() {
+    private val userDetailsLiveData = MutableLiveData<UserDetails>()
+
+    fun getUserDetailsLiveData(): LiveData<UserDetails> {
+        return userDetailsLiveData
+    }
+
+    fun onUserDetailsEventTrigger(userDetailsEvent: UserDetailsWidgetEvent) {
+        when (userDetailsEvent) {
+            is UserDetailsWidgetEvent.FetchUserDetailsEvent -> userDetailsLiveData.postValue(
+                userDetailsEvent.userDetails)
+        }
     }
 
     @Bindable
-    fun getUserName():String{
-        return userDetailsLiveDate.value?.name?:""
+    fun getUserName(): String {
+        return userDetailsLiveData.value?.name ?: ""
     }
 }
